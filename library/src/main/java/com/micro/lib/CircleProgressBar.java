@@ -3,11 +3,9 @@ package com.micro.lib;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.RadialGradient;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.SweepGradient;
@@ -51,8 +49,33 @@ public class CircleProgressBar extends View {
     private RectF rectF3 = new RectF();
     private RectF rectF4 = new RectF();
     // 颜色渐变
-    private int[] shadowColors3 = {Color.parseColor("#FFE709"), Color.parseColor("#FFA754"), Color.parseColor("#FFE921"), Color.parseColor("#FFAE0E")};
-    private int[] shadowColors4 = {Color.parseColor("#FF0000"), Color.parseColor("#F0F0F0"), Color.parseColor("#F0000F"), Color.parseColor("#FFAE0E")};
+    private int[] shadowColors3 = {
+            Color.parseColor("#FF6699"),
+            Color.parseColor("#FF8088"),
+            Color.parseColor("#FF9977"),
+            Color.parseColor("#FFB366"),
+            Color.parseColor("#FFCC55"),
+            Color.parseColor("#FFCC55"),
+            Color.parseColor("#FFB366"),
+            Color.parseColor("#FF9977"),
+            Color.parseColor("#FF8088"),
+            Color.parseColor("#FF6699")
+    };
+    private int[] shadowColors4 = {
+            Color.parseColor("#FF0033"),
+            Color.parseColor("#FF132E"),
+            Color.parseColor("#FF6F17"),
+            Color.parseColor("#FF8213"),
+            Color.parseColor("#FF940E"),
+            Color.parseColor("#FFA709"),
+            Color.parseColor("#FFB905"),
+            Color.parseColor("#FFA709"),
+            Color.parseColor("#FF940E"),
+            Color.parseColor("#FF8213"),
+            Color.parseColor("#FF6F17"),
+            Color.parseColor("#FF132E"),
+            Color.parseColor("#FF0033")
+    };
     private float[] shadowPositions1 = {0.2f, 0.5f, 0.8f, 1.0f};
 
     // 画圆圈的画笔
@@ -88,10 +111,11 @@ public class CircleProgressBar extends View {
     private void init() {
         mCirclePaint.setDither(true);
         mCirclePaint.setAntiAlias(true);
-        mCirclePaint.setStyle(Paint.Style.STROKE);
-        mCirclePaint.setStrokeCap(Paint.Cap.ROUND);
+        mCirclePaint.setStyle(Paint.Style.STROKE); // 描边专用
+        mCirclePaint.setStrokeCap(Paint.Cap.ROUND); // 圆形笔头
+        mCirclePaint.setStrokeJoin(Paint.Join.MITER);
 
-        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.rocket);
+//        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.rocket);
     }
 
     @Override
@@ -118,11 +142,8 @@ public class CircleProgressBar extends View {
         rectF4.set(offsetRect4, offsetRect4, width - offsetRect4, height - offsetRect4);
 
         // 环形渐变效果
-        shader3 = new RadialGradient(centerX, centerY, radius3, Color.RED, Color.BLUE, Shader.TileMode.CLAMP);
-        shader4 = new RadialGradient(centerX, centerY, radius4, shadowColors4, shadowPositions1, Shader.TileMode.CLAMP);
-        shader3 = new SweepGradient(centerX, centerY, shadowColors3, shadowPositions1);
-//        shader4 = new LinearGradient(0, 0, w, h, shadowColors4, shadowPositions1, Shader.TileMode.CLAMP);
-//        shader = new BitmapShader(BitmapFactory.decodeResource(getResources(), R.drawable.rocket), Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
+        shader3 = new SweepGradient(centerX, centerY, shadowColors3, null);
+        shader4 = new SweepGradient(centerX, centerY, shadowColors4, null);
     }
 
 
