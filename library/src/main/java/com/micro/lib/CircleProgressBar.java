@@ -20,24 +20,24 @@ import android.view.View;
  */
 public class CircleProgressBar extends View {
 
-    // 控件宽高
+    // 从内到外的圆圈粗度
+    private final int stroke1 = 6;
+    private final int stroke2 = 20;
+    private final int stroke3 = 20;
+    private final int stroke4 = 6;
+
+    // 每个圈圈对应边界偏移量
+    private final int offset1 = 60;
+    private final int offset2 = 20;
+    private final int offset3 = 20;
+    private final int offset4 = 0;
+
+    // 圆心X,圆心Y
     private int width, height;
     // 半径
     private int radius;
-    // 圆心X,圆心Y
+    // 控件宽高
     private int centerX, centerY;
-
-    // 从内到外的圆圈
-    private int stroke1 = 6;
-    private int stroke2 = 20;
-    private int stroke3 = 20;
-    private int stroke4 = 6;
-
-    // 每个圈圈对应边界偏移量
-    private int offset1 = 60;
-    private int offset2 = 20;
-    private int offset3 = 20;
-    private int offset4 = 0;
 
     // 每个圈的半径
     private float radius1;
@@ -131,6 +131,11 @@ public class CircleProgressBar extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
+        // 需要保证宽高一致
+        if (w != h) {
+            throw new IllegalStateException("width must equals height");
+        }
+
         width = w;
         height = h;
         // 半径取宽高小值
@@ -217,7 +222,7 @@ public class CircleProgressBar extends View {
      */
     public void setMaxProgress(float maxProgress) {
         if (maxProgress <= 0) {
-            throw new IllegalStateException("Max progress must >0");
+            throw new IllegalStateException("Max progress must be >0");
         }
         this.mMaxProgress = maxProgress;
         postInvalidate();
