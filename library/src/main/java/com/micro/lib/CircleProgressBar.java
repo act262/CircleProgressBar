@@ -95,15 +95,17 @@ public class CircleProgressBar extends View {
     private float mCurrentProgress = 0;
 
     public CircleProgressBar(Context context) {
-        this(context, null, 0, 0);
+        this(context, null);
     }
 
     public CircleProgressBar(Context context, AttributeSet attrs) {
-        this(context, attrs, 0, 0);
+        super(context, attrs);
+        init();
     }
 
     public CircleProgressBar(Context context, AttributeSet attrs, int defStyleAttr) {
-        this(context, attrs, defStyleAttr, 0);
+        super(context, attrs, defStyleAttr);
+        init();
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
