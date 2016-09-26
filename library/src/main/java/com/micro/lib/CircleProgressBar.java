@@ -28,15 +28,15 @@ public class CircleProgressBar extends View {
     private int centerX, centerY;
 
     // 从内到外的圆圈
-    private int stroke1 = 10;
-    private int stroke2 = 25;
-    private int stroke3 = 40;
-    private int stroke4 = 15;
+    private int stroke1 = 6;
+    private int stroke2 = 20;
+    private int stroke3 = 20;
+    private int stroke4 = 6;
 
     // 每个圈圈对应边界偏移量
-    private int offset1 = 150;
-    private int offset2 = 50;
-    private int offset3 = 50;
+    private int offset1 = 60;
+    private int offset2 = 20;
+    private int offset3 = 20;
     private int offset4 = 0;
 
     // 每个圈的半径
@@ -45,8 +45,8 @@ public class CircleProgressBar extends View {
     private float radius3;
     private float radius4;
 
-    private int color1 = Color.GRAY;
-    private int color2 = Color.GRAY;
+    private int color1 = Color.parseColor("#f2f2f2");
+    private int color2 = Color.parseColor("#f2f2f2");
 
     private Shader shader3;
     private Shader shader4;
@@ -155,7 +155,6 @@ public class CircleProgressBar extends View {
         shader4 = new SweepGradient(centerX, centerY, shadowColors4, null);
     }
 
-
     @Override
     protected synchronized void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -190,7 +189,8 @@ public class CircleProgressBar extends View {
 
         // 画圆圈3（圆弧1）
         float startAngle = -90; // 从0点方向开始
-        float sweepAngle = (mCurrentProgress / mMaxProgress) * 360;
+        float percentage = mCurrentProgress / mMaxProgress; // 进度百分比例
+        float sweepAngle = percentage * 360;
         mPaint.setStrokeWidth(stroke3);
         mPaint.setShader(shader3);
         canvas.drawArc(rectF3, startAngle, sweepAngle, false, mPaint);
@@ -201,16 +201,6 @@ public class CircleProgressBar extends View {
         canvas.drawArc(rectF4, startAngle, sweepAngle, false, mPaint);
 
         // 画火箭
-//        float x = (float) (centerX * Math.sin(sweepAngle / Math.PI / 2)) + centerX;
-//        float y = (float) (centerX * Math.cos(sweepAngle / Math.PI / 2)) + centerX;
-//        canvas.drawBitmap(bitmap, x - stroke4, y - stroke4, mPaint);
-
-        // 旋转画布实现
-//        canvas.save();
-//        canvas.rotate(centerX, centerY, sweepAngle);
-//        canvas.drawBitmap(bitmap, 0, 0, mPaint);
-//        canvas.restore();
-
         // 旋转matrix操作实现
         matrix.reset();
         matrix.preTranslate(radius - stroke4 / 2 - bitmap.getWidth() / 2, -stroke4 / 2);
