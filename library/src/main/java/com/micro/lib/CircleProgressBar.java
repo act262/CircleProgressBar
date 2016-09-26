@@ -3,8 +3,10 @@ package com.micro.lib;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Shader;
@@ -20,6 +22,8 @@ public class CircleProgressBar extends View {
 
     // 控件宽高
     private int width, height;
+    // 半径
+    private int radius;
     // 圆心X,圆心Y
     private int centerX, centerY;
 
@@ -79,16 +83,16 @@ public class CircleProgressBar extends View {
     private float[] shadowPositions1 = {0.2f, 0.5f, 0.8f, 1.0f};
 
     // 画圆圈的画笔
-    private Paint mCirclePaint = new Paint();
+    private Paint mPaint;
+    // 旋转的火箭
+    private Bitmap bitmap;
+    // 控制火箭旋转矩阵
+    private Matrix matrix = new Matrix();
 
     // 最大进度界线值
     private float mMaxProgress = 100;
-
     // 当前进度值
     private float mCurrentProgress = 0;
-
-    // 火箭的图片
-    private Bitmap bitmap;
 
     public CircleProgressBar(Context context) {
         this(context, null, 0, 0);
@@ -109,13 +113,17 @@ public class CircleProgressBar extends View {
     }
 
     private void init() {
-        mCirclePaint.setDither(true);
-        mCirclePaint.setAntiAlias(true);
-        mCirclePaint.setStyle(Paint.Style.STROKE); // 描边专用
-        mCirclePaint.setStrokeCap(Paint.Cap.ROUND); // 圆形笔头
-        mCirclePaint.setStrokeJoin(Paint.Join.MITER);
+        mPaint = new Paint();
+        mPaint.setDither(true);
+        mPaint.setAntiAlias(true);
+        mPaint.setStyle(Paint.Style.STROKE); // 描边专用
+        mPaint.setStrokeCap(Paint.Cap.ROUND); // 圆形笔头
+        mPaint.setStrokeJoin(Paint.Join.MITER);
 
-//        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.rocket);
+        // 限定了火箭图片大小
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 4;
+        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.rocket, options);
     }
 
     @Override
@@ -123,12 +131,13 @@ public class CircleProgressBar extends View {
         super.onSizeChanged(w, h, oldw, oldh);
         width = w;
         height = h;
+        // 半径取宽高小值
+//        radius = Math.min(w, h) / 2;
 
         centerX = w / 2;
         centerY = h / 2;
-
         // 当前圆的半径
-        float radius = w / 2;
+        radius = w / 2;
 
         radius1 = (width - stroke1) / 2 - offset1;
         radius2 = (width - stroke2) / 2 - offset2;
@@ -150,40 +159,64 @@ public class CircleProgressBar extends View {
     @Override
     protected synchronized void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+//        drawGuideLine(canvas);
         drawCircle(canvas);
+    }
+
+    // 画参考线
+    private void drawGuideLine(Canvas canvas) {
+        mPaint.setColor(Color.BLUE);
+        mPaint.setStyle(Paint.Style.STROKE);
+        // 画一个圆心
+        canvas.drawCircle(centerX, centerY, 2, mPaint);
+        // 外边框
+        canvas.drawRect(0, 0, width, height, mPaint);
     }
 
     private void drawCircle(Canvas canvas) {
         // 重置画笔样式
-        mCirclePaint.setShader(null);
-//        mCirclePaint.reset();
+        mPaint.setShader(null);
+        mPaint.setStyle(Paint.Style.STROKE);
 
         // 画灰色圆圈1
-        mCirclePaint.setColor(color1);
-        mCirclePaint.setStrokeWidth(stroke1);
-        canvas.drawCircle(centerX, centerY, radius1, mCirclePaint);
+        mPaint.setColor(color1);
+        mPaint.setStrokeWidth(stroke1);
+        canvas.drawCircle(centerX, centerY, radius1, mPaint);
 
         // 画灰色圆圈2
-        mCirclePaint.setColor(color2);
-        mCirclePaint.setStrokeWidth(stroke2);
-        canvas.drawCircle(centerX, centerY, radius2, mCirclePaint);
+        mPaint.setColor(color2);
+        mPaint.setStrokeWidth(stroke2);
+        canvas.drawCircle(centerX, centerY, radius2, mPaint);
 
         // 画圆圈3（圆弧1）
         float startAngle = -90; // 从0点方向开始
         float sweepAngle = (mCurrentProgress / mMaxProgress) * 360;
-        mCirclePaint.setStrokeWidth(stroke3);
-        mCirclePaint.setShader(shader3);
-        canvas.drawArc(rectF3, startAngle, sweepAngle, false, mCirclePaint);
+        mPaint.setStrokeWidth(stroke3);
+        mPaint.setShader(shader3);
+        canvas.drawArc(rectF3, startAngle, sweepAngle, false, mPaint);
 
         // 画圆圈4（圆弧2）
-        mCirclePaint.setStrokeWidth(stroke4);
-        mCirclePaint.setShader(shader4);
-        canvas.drawArc(rectF4, startAngle, sweepAngle, false, mCirclePaint);
+        mPaint.setStrokeWidth(stroke4);
+        mPaint.setShader(shader4);
+        canvas.drawArc(rectF4, startAngle, sweepAngle, false, mPaint);
 
         // 画火箭
-//        mCirclePaint.setShader(shader3);
-    }
+//        float x = (float) (centerX * Math.sin(sweepAngle / Math.PI / 2)) + centerX;
+//        float y = (float) (centerX * Math.cos(sweepAngle / Math.PI / 2)) + centerX;
+//        canvas.drawBitmap(bitmap, x - stroke4, y - stroke4, mPaint);
 
+        // 旋转画布实现
+//        canvas.save();
+//        canvas.rotate(centerX, centerY, sweepAngle);
+//        canvas.drawBitmap(bitmap, 0, 0, mPaint);
+//        canvas.restore();
+
+        // 旋转matrix操作实现
+        matrix.reset();
+        matrix.preTranslate(radius - stroke4 / 2 - bitmap.getWidth() / 2, -stroke4 / 2);
+        matrix.postRotate(sweepAngle, centerX, centerY);
+        canvas.drawBitmap(bitmap, matrix, mPaint);
+    }
 
     /**
      * 设置可用最大值
@@ -201,7 +234,7 @@ public class CircleProgressBar extends View {
     /**
      * 设置当前进度值
      */
-    public void setProgress(float progress) {
+    public void setProgress(int progress) {
         if (0 <= progress && progress <= mMaxProgress) {
             this.mCurrentProgress = progress;
             postInvalidate();
