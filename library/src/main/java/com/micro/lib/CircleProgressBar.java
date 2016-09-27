@@ -12,6 +12,7 @@ import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.SweepGradient;
 import android.os.Build;
+import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -84,6 +85,8 @@ public class CircleProgressBar extends View {
 
     // 画圆圈的画笔
     private Paint mPaint;
+    // 文字画笔
+    private TextPaint mTextPaint;
     // 旋转的火箭
     private Bitmap bitmap;
     // 控制火箭旋转矩阵
@@ -126,6 +129,14 @@ public class CircleProgressBar extends View {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = 4;
         bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.rocket, options);
+
+        // 文字画笔设置
+        mTextPaint = new TextPaint();
+        mTextPaint.setTextSize(50);
+        mTextPaint.setColor(Color.RED);
+        mTextPaint.setAntiAlias(true);
+        mTextPaint.setFakeBoldText(true);
+        mTextPaint.setTextAlign(Paint.Align.CENTER);
     }
 
     @Override
@@ -167,6 +178,7 @@ public class CircleProgressBar extends View {
         super.onDraw(canvas);
 //        drawGuideLine(canvas);
         drawCircle(canvas);
+        drawText(canvas);
     }
 
     // 画参考线
@@ -179,6 +191,7 @@ public class CircleProgressBar extends View {
         canvas.drawRect(0, 0, width, height, mPaint);
     }
 
+    // 画圆部分
     private void drawCircle(Canvas canvas) {
         // 重置画笔样式
         mPaint.setShader(null);
@@ -213,6 +226,15 @@ public class CircleProgressBar extends View {
         matrix.preTranslate(radius - stroke4 / 2 - bitmap.getWidth() / 2, -stroke4 / 2);
         matrix.postRotate(sweepAngle, centerX, centerY);
         canvas.drawBitmap(bitmap, matrix, mPaint);
+    }
+
+    // 画文字部分
+    private void drawText(Canvas canvas) {
+        // 当前进度，折算成百分比的数字
+        int currentProgress = (int) (mCurrentProgress / mMaxProgress * 100);
+        // 垂直方向居中参考线
+        float baseY = canvas.getHeight() / 2 - (mTextPaint.ascent() + mTextPaint.descent()) / 2;
+        canvas.drawText(currentProgress + " %", centerX, baseY, mTextPaint);
     }
 
     /**
