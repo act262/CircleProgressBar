@@ -151,8 +151,6 @@ public class CircleProgressBar extends View {
 
         width = w;
         height = h;
-        // 半径取宽高小值
-//        radius = Math.min(w, h) / 2;
 
         centerX = w / 2;
         centerY = h / 2;
@@ -178,9 +176,10 @@ public class CircleProgressBar extends View {
     @Override
     protected synchronized void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        float percentage = mCurrentProgress / mMaxProgress; // 进度百分比例
 //        drawGuideLine(canvas);
-        drawCircle(canvas);
-        drawText(canvas);
+        drawCircle(canvas, percentage);
+        drawText(canvas, percentage);
     }
 
     // 画参考线
@@ -194,7 +193,7 @@ public class CircleProgressBar extends View {
     }
 
     // 画圆部分
-    private void drawCircle(Canvas canvas) {
+    private void drawCircle(Canvas canvas, float percentage) {
         // 重置画笔样式
         mPaint.setShader(null);
         mPaint.setStyle(Paint.Style.STROKE);
@@ -211,7 +210,6 @@ public class CircleProgressBar extends View {
 
         // 画圆圈3（圆弧1）
         float startAngle = -90; // 从0点方向开始
-        float percentage = mCurrentProgress / mMaxProgress; // 进度百分比例
         float sweepAngle = percentage * 360;
         mPaint.setStrokeWidth(stroke3);
         mPaint.setShader(shader3);
@@ -231,9 +229,9 @@ public class CircleProgressBar extends View {
     }
 
     // 画文字部分
-    private void drawText(Canvas canvas) {
+    private void drawText(Canvas canvas, float percentage) {
         // 当前进度，折算成百分比的数字
-        int currentProgress = (int) (mCurrentProgress / mMaxProgress * 100);
+        int currentProgress = (int) (percentage * 100);
         // 垂直方向居中参考线
         float baseY = canvas.getHeight() / 2 - (mTextPaint.ascent() + mTextPaint.descent()) / 2;
         canvas.drawText(currentProgress + " %", centerX, baseY, mTextPaint);
