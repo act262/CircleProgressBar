@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -22,21 +23,19 @@
             android:id="@+id/start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="startProgress"
-            android:text="start" />
+            android:text="@string/start" />
 
         <Button
-            android:id="@+id/stop"
+            android:id="@+id/pause"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="stopProgress"
-            android:text="stop" />
+            android:text="@string/pause" />
 
         <EditText
             android:id="@+id/et_duration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Deault duration 100ms"
+            android:hint="@string/default_speed"
             android:inputType="number" />
     </LinearLayout>
 </RelativeLayout>

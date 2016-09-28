@@ -91,6 +91,8 @@ public class CircleProgressBar extends View {
     private Bitmap bitmap;
     // 控制火箭旋转矩阵
     private Matrix matrix = new Matrix();
+    // 文字大小
+    private int mTextSize = 100;
 
     // 最大进度界线值
     private float mMaxProgress = 100;
@@ -132,7 +134,7 @@ public class CircleProgressBar extends View {
 
         // 文字画笔设置
         mTextPaint = new TextPaint();
-        mTextPaint.setTextSize(50);
+        mTextPaint.setTextSize(mTextSize);
         mTextPaint.setColor(Color.RED);
         mTextPaint.setAntiAlias(true);
         mTextPaint.setFakeBoldText(true);
